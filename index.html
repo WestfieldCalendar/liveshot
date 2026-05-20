@@ -13,11 +13,13 @@ html, body {
     background: black;
 }
 
-video {
+#video {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    border: 0;
 }
 
 #logo {
@@ -32,33 +34,14 @@ video {
 
 <body>
 
-<video id="video" autoplay muted playsinline></video>
+<iframe
+    id="video"
+    src="https://www.youtube.com/embed/hGUCcDJco2Q?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
+    allow="autoplay; fullscreen"
+    allowfullscreen>
+</iframe>
 
 <img id="logo" src="logo.png">
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<script>
-const video = document.getElementById('video');
-const streamURL = "http://207.159.162.139:8888/cam1/index.m3u8";
-
-if (Hls.isSupported()) {
-    const hls = new Hls({
-        lowLatencyMode: true
-    });
-
-    hls.loadSource(streamURL);
-    hls.attachMedia(video);
-
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play();
-    });
-
-} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = streamURL;
-    video.addEventListener('loadedmetadata', () => video.play());
-}
-</script>
 
 </body>
 </html>
