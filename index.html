@@ -14,60 +14,41 @@ html, body {
     height: 1080px;
     overflow: hidden;
     background: black;
-    font-family: Arial, sans-serif;
 }
 
-/* Video background */
-#video {
+/* Fullscreen stream */
+#stream {
     position: absolute;
     top: 0;
     left: 0;
     width: 1920px;
     height: 1080px;
-    object-fit: cover;
+    border: 0;
 }
 
-
-/* Bottom-left logo */
+/* Logo overlay */
 #logo {
     position: absolute;
     bottom: 30px;
     left: 30px;
     width: 220px;
+    z-index: 10;
+    pointer-events: none;
 }
-
-
 </style>
 </head>
 
 <body>
 
-<video id="video" autoplay muted playsinline></video>
-
-<div id="dim"></div>
+<!-- WebRTC (MediaMTX) -->
+<iframe
+    id="stream"
+    src="http://207.159.162.139:8889/cam1?autoplay=true&muted=true"
+    allow="autoplay; fullscreen"
+    scrolling="no">
+</iframe>
 
 <img id="logo" src="logo.png" alt="Logo">
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<script>
-const video = document.getElementById('video');
-const streamURL = "http://207.159.162.139:8888/cam1/index.m3u8";
-
-if (Hls.isSupported()) {
-    const hls = new Hls({
-        lowLatencyMode: true
-    });
-
-    hls.loadSource(streamURL);
-    hls.attachMedia(video);
-}
-else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = streamURL;
-}
-</script>
 
 </body>
 </html>
