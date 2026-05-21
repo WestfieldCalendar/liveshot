@@ -19,14 +19,42 @@ html, body {
     background: black;
 }
 
-/* VIDEO */
-#video {
+/* VIDEO + CAMPUS IMAGE */
+#video,
+#campusImage {
     position: absolute;
     top: 0;
     left: 0;
     width: 1920px;
     height: 1080px;
     border: 0;
+    object-fit: cover;
+}
+
+/* CAMPUS IMAGE HIDDEN BY DEFAULT */
+#campusImage {
+    display: none;
+    z-index: 5;
+}
+
+/* OVERLAY IMAGE ROTATOR */
+.overlayImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    object-fit: cover;
+
+    z-index: 15;
+
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+/* ACTIVE OVERLAY */
+.overlayImage.active {
+    opacity: 1;
 }
 
 /* LOGO */
@@ -35,7 +63,7 @@ html, body {
     bottom: 30px;
     left: 30px;
     width: 500px;
-    z-index: 10;
+    z-index: 20;
 }
 
 /* LIVE VIEW */
@@ -54,37 +82,12 @@ html, body {
 
     text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
 }
-
-/* CENTER ROTATING TEXT */
-#rotatingText {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    width: 1400px;
-
-    color: white;
-    font-family: "Source Serif 4", Georgia, serif;
-    font-style: italic;
-    font-size: 78px;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.2;
-
-    text-shadow: 3px 3px 10px rgba(0,0,0,0.85);
-
-    z-index: 20;
-
-    opacity: 1;
-    transition: opacity 0.8s ease;
-}
 </style>
 </head>
 
 <body>
 
-<!-- VIDEO -->
+<!-- LIVE VIDEO -->
 <iframe
     id="video"
     src="https://www.youtube.com/embed/4R7X2luK25M?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
@@ -92,40 +95,71 @@ html, body {
     allowfullscreen>
 </iframe>
 
+<!-- NIGHTTIME CAMPUS IMAGE -->
+<img id="campusImage" src="campus.png">
+
+<!-- OVERLAY IMAGES -->
+<img class="overlayImage active" src="academic.png">
+<img class="overlayImage" src="dedicate.png">
+<img class="overlayImage" src="explore.png">
+<img class="overlayImage" src="smart.png">
+
 <!-- LOGO -->
 <img id="logo" src="logo.png">
 
 <!-- LIVE VIEW -->
 <div id="liveText">Live View</div>
 
-<!-- ROTATING TEXT -->
-<div id="rotatingText"></div>
-
 <script>
-/* ROTATING PHRASES */
-const phrases = [
-    "Explore. Experience. Excel",
-    "Our tuition is 24% lower than the national average for public universities",
-    "Get individualized attention to help you succeed and thrive — no matter your goals.",
-    "We offer one-of-a-kind programs, small class sizes, and top-ranked online learning to prepare you for the road ahead."
-];
+/* IMAGE ROTATION */
+const images = document.querySelectorAll(".overlayImage");
 
-let currentPhrase = 0;
-const textElement = document.getElementById("rotatingText");
+let currentImage = 0;
 
-function showPhrase() {
-    textElement.style.opacity = 0;
+function rotateImages() {
+    images[currentImage].classList.remove("active");
 
-    setTimeout(() => {
-        textElement.innerHTML = phrases[currentPhrase];
-        textElement.style.opacity = 1;
+    currentImage = (currentImage + 1) % images.length;
 
-        currentPhrase = (currentPhrase + 1) % phrases.length;
-    }, 800);
+    images[currentImage].classList.add("active");
 }
 
-showPhrase();
-setInterval(showPhrase, 8000);
+setInterval(rotateImages, 8000);
+
+/* DAY/NIGHT SWITCH */
+function updateDisplayMode() {
+    const now = new Date();
+
+    /* Eastern Time */
+    const estHour = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        hour: 'numeric',
+        hour12: false
+    }).format(now);
+
+    const hour = parseInt(estHour);
+
+    const video = document.getElementById("video");
+    const campusImage = document.getElementById("campusImage");
+    const liveText = document.getElementById("liveText");
+
+    /* 7 PM - 7 AM */
+    if (hour >= 19 || hour < 7) {
+        video.style.display = "none";
+        campusImage.style.display = "block";
+        liveText.style.display = "none";
+    } else {
+        video.style.display = "block";
+        campusImage.style.display = "none";
+        liveText.style.display = "block";
+    }
+}
+
+/* CHECK IMMEDIATELY */
+updateDisplayMode();
+
+/* CHECK EVERY MINUTE */
+setInterval(updateDisplayMode, 60000);
 </script>
 
 </body>
