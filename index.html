@@ -14,6 +14,7 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+/* VIDEO */
 #video {
     position: absolute;
     top: 0;
@@ -23,6 +24,7 @@ html, body {
     border: 0;
 }
 
+/* LOGO */
 #logo {
     position: absolute;
     bottom: 30px;
@@ -31,7 +33,7 @@ html, body {
     z-index: 10;
 }
 
-/* LIVE VIEW text */
+/* LIVE VIEW */
 #liveText {
     position: absolute;
     top: 30px;
@@ -47,27 +49,36 @@ html, body {
     text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
 }
 
-/* Date + Time */
-#clock {
+/* CENTER ROTATING TEXT */
+#rotatingText {
     position: absolute;
-    bottom: 40px;
-    right: 40px;
-    z-index: 20;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 1400px;
 
     color: white;
-    font-size: 34px;
-    font-weight: 700;
+    font-size: 78px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    text-align: right;
+    letter-spacing: 2px;
+    text-align: center;
+    line-height: 1.2;
 
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    text-shadow: 3px 3px 10px rgba(0,0,0,0.85);
+
+    z-index: 20;
+
+    opacity: 1;
+    transition: opacity 0.8s ease;
 }
 </style>
 </head>
 
 <body>
 
+<!-- VIDEO -->
 <iframe
     id="video"
     src="https://www.youtube.com/embed/4R7X2luK25M?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1"
@@ -75,33 +86,40 @@ html, body {
     allowfullscreen>
 </iframe>
 
+<!-- LOGO -->
 <img id="logo" src="logo.png">
 
+<!-- LIVE VIEW -->
 <div id="liveText">LIVE VIEW</div>
 
-<div id="clock"></div>
+<!-- ROTATING TEXT -->
+<div id="rotatingText"></div>
 
 <script>
-function updateClock() {
-    const now = new Date();
+/* ROTATING PHRASES */
+const phrases = [
+    "Explore. Experience. Excel",
+    "Our tuition is 24% lower than the national average for public universities",
+    "Get individualized attention to help you succeed and thrive — no matter your goals.",
+    "We offer one-of-a-kind programs, small class sizes, and top-ranked online learning to prepare you for the road ahead."
+];
 
-    const options = {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        second: '2-digit'
-    };
+let currentPhrase = 0;
+const textElement = document.getElementById("rotatingText");
 
-    const formatted = now.toLocaleString('en-US', options);
+function showPhrase() {
+    textElement.style.opacity = 0;
 
-    document.getElementById('clock').innerHTML = formatted;
+    setTimeout(() => {
+        textElement.innerHTML = phrases[currentPhrase];
+        textElement.style.opacity = 1;
+
+        currentPhrase = (currentPhrase + 1) % phrases.length;
+    }, 800);
 }
 
-updateClock();
-setInterval(updateClock, 1000);
+showPhrase();
+setInterval(showPhrase, 8000);
 </script>
 
 </body>
